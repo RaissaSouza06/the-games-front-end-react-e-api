@@ -12,7 +12,6 @@ const HomeContent = () => {
   // criando um estado para controlar o CARREGAMENTO - LOADING
   const [loading, setLoading] = useState(true);
 
-
   // hook useEffect - efeito colateral do componente
   useEffect(() => {
     // aqui vai a lógica do useEffect
@@ -32,6 +31,23 @@ const HomeContent = () => {
     // invocando a função, precisar ser invocado para funcionar, fica dentro do useEffect
     fetchGames();
   }, []) // dependencia do useEffect
+
+  // função de exclusão
+  const deleteGame = async (gameId) => {
+    try {
+      // recebe o id do jogo e manda como parametro p api excluir o jogo
+      // a resposta da api é armazenada na variavel response
+      const response = await axios.delete(`http://localhost:4000/games/${gameId}`);
+      if (response.status == 204){ // se o status retornado pela api for 204:
+        alert("O jogo foi excluido com sucesso")
+        // atualizando o estado removendo o jogo excluido
+        setGames(games.filter((game) => game._id !== gameId))
+      }
+    } catch (error){
+      console.log(error)
+    }
+  }
+
   return (
     <>
       <div className={styles.homeContent}>
@@ -66,6 +82,19 @@ const HomeContent = () => {
                     style: "currency",
                     currency: "BRL"
                   })}</li>
+                  {/* Botão de deletar */}
+                  <button className={styles.btnDel} onClick={() => {
+                    const confirmacao = window.confirm(
+                      "Deseja mesmo excluir o jogo?"
+                    );
+                    // se o valor for verdadeiro 
+                    if (confirmacao) {
+                      // invocando a função de deletar
+                      deleteGame(game._id)
+                    }
+                  }}>
+                    Deletar
+                  </button>
                 </div>
               </ul>
             ))}
