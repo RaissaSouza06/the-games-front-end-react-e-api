@@ -4,13 +4,17 @@ import Loading from "../Loading";
 import axios from "axios";
 // importando o hook useState e useEffect (é o efeito colateral do componente, executado assim que o compenente é chamda, o que é chamado primeiro)
 import {useState, useEffect} from "react";
+import EditContent from "../EditContent";
 
 const HomeContent = () => {
   // criando um estado para lista de jogo
   const [games, setGames] = useState([]); // o estado inicial é um array vazio
 
+  // criando um estado para o jogo que sera alterado
+  const [selectedGame, setSelectedGame] = useState(null)
+
   // criando um estado para controlar o CARREGAMENTO - LOADING
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);  
 
   // hook useEffect - efeito colateral do componente
   useEffect(() => {
@@ -46,6 +50,18 @@ const HomeContent = () => {
     } catch (error){
       console.log(error)
     }
+  }
+
+  // função para abrir o modal de edição
+  const openEditModal = (game) => {
+    // atualizando o estado do jogo que será alterado
+    setSelectedGame(game); // pega as informações do jogo e manda p essa função
+  }
+
+  // função quando o modal for fechado 
+  const closeEditModal = () => {
+    // limpando o estado do jogo selecionado
+    setSelectedGame(null);
   }
 
   return (
@@ -95,12 +111,22 @@ const HomeContent = () => {
                   }}>
                     Deletar
                   </button>
+                  {/* Botão de editar */}
+                  <button className={styles.btnEdit}
+                  onClick={() => openEditModal(game)}>
+                    Editar
+                  </button>
                 </div>
               </ul>
             ))}
           </div>
           )}
         </div>
+        {/* Renderização condicional para exibir o modal de edição */}
+        {selectedGame && (
+          // criando props e mandando uma função onClose={closeEditModal}
+          <EditContent game={selectedGame} onClose={closeEditModal}/>
+        )}
       </div>
     </>
   );
