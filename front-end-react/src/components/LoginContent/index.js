@@ -1,13 +1,25 @@
 import styles from "@/components/LoginContent/LoginContent.module.css";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import {login} from "@/services/authService.js"
 
 const LoginContent = () => {
   const router = useRouter();
-
-  const handleLogin = (e) => {
+  // criando os estados de email e senha
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Futuramente aqui irá a validação, autenticação, etc.
-    router.push("/home");
+    //aqui irá a validação, autenticação, etc.
+    const result =  await login(email, password)
+    // verificando se o login foi bem sucedido
+    if(result.success){
+      alert("Login realizado com sucesso")    
+      router.push("/home");
+    } else{
+      alert("Falha ao realizar o login, tente novamente")
+    }
   };
 
   return (
@@ -35,6 +47,8 @@ const LoginContent = () => {
               id="email"
               placeholder="Digite seu e-mail"
               className={`${styles.input} ${"inputPrimary"}`}
+              value={email}
+              onChange={(e)=> setEmail(e.target.value)}
             />
             <input
               type="password"
@@ -42,6 +56,8 @@ const LoginContent = () => {
               id="password"
               placeholder="Digite sua senha"
               className={`${styles.input} ${"inputPrimary"}`}
+              value={password}
+              onChange={(e)=> setPassword(e.target.value)}
             />
             <button type="submit" className={`${styles.input} ${"btnPrimary"}`}>
               Entrar

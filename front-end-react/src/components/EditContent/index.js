@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import styles from "@/components/EditContent/EditContent.module.css";
 import axios from "axios";
+import { useRouter } from "next/router";
 
-const EditContent = ({game, onClose}) => { // recebendo a props {game, onClose}
+
+const EditContent = ({game, onClose, handleUpdate }) => { // recebendo a props {game, onClose}
     
     // criando estados para armazenar os dados do formulário
     const [id, setId] = useState("");
@@ -27,6 +29,38 @@ const EditContent = ({game, onClose}) => { // recebendo a props {game, onClose}
         }
     }, [game]) // dependencia do useEffect - é o que faz ele ser executado novamente quando aquela informação é alterada (quando o jogo é alterado)
 
+    // função de update
+    const handleSubmit = async (e) => {
+        // evitando que o formulário recarregue
+        // e.preventDefault()
+
+        // criando o json com as informações do jogo
+        const updateGame = {
+            title,
+            year,
+            price,
+            descriptions: {
+                platform,
+                genre,
+                rating
+            }
+        };
+
+        // enviando para a API
+        try{
+            const response = await axios.put(
+                `http://localhost:4000/games/${id}`, updateGame
+            );
+            if(response.status === 200){
+                alert("O jogo foi alterado com sucesso!")
+                // PASSAR O JOGO ALTERADO PARA O COMPONENTE PAI (HOMECONTENT)
+                handleUpdate(response.data.game)
+                // router.push("/home")
+            }
+        } catch(error){
+            console.log(error)
+        }
+    }
 
     return (
         <>
@@ -41,7 +75,7 @@ const EditContent = ({game, onClose}) => { // recebendo a props {game, onClose}
                     <div className="title">
                         <h2>Editar jogo</h2>
                     </div>
-                    <form id="editForm">
+                    <form id="editForm" onSubmit={handleSubmit}>
                         <input 
                             type="hidden" 
                             name="id" 
@@ -103,12 +137,6 @@ const EditContent = ({game, onClose}) => { // recebendo a props {game, onClose}
                         />
                         <input type="submit" value="Alterar" className="btnPrimary" />
                     </form>
-                    {title}<br/>
-                    {platform}<br/>
-                    {genre}<br/>
-                    {rating}<br/>
-                    {year}<br/>
-                    {price}<br/>
                 </div>
             </div>
         </>

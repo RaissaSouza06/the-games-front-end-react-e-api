@@ -5,6 +5,8 @@ import axios from "axios";
 // importando o hook useState e useEffect (é o efeito colateral do componente, executado assim que o compenente é chamda, o que é chamado primeiro)
 import {useState, useEffect} from "react";
 import EditContent from "../EditContent";
+// importando o axiosConfig
+import { getAxiosConfig } from "@/services/authService";
 
 const HomeContent = () => {
   // criando um estado para lista de jogo
@@ -22,7 +24,8 @@ const HomeContent = () => {
     // criando uma função para buscar os jogos na api (fetch - pegar)
     const fetchGames = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/games");// espera ele trazer os jogos
+        const response = await axios.get("http://localhost:4000/games", 
+          getAxiosConfig());// espera ele trazer os jogos
         //console.log(reponse) // printa a lista no console
         // passando a lista de jogos para o estado
         setGames(response.data.games)
@@ -37,6 +40,7 @@ const HomeContent = () => {
   }, []) // dependencia do useEffect
 
   // função de exclusão
+  // pega o id para conseguir saber qual jogo tem que ser deletado
   const deleteGame = async (gameId) => {
     try {
       // recebe o id do jogo e manda como parametro p api excluir o jogo
@@ -62,6 +66,16 @@ const HomeContent = () => {
   const closeEditModal = () => {
     // limpando o estado do jogo selecionado
     setSelectedGame(null);
+  }
+
+  // função que atualiza a lista de jogos com o jogo alterado
+  const handleUpdate = (updatedGame) =>{
+    setGames(
+      // cria um novo array com o jogo atualizado
+      // ve se o id do jogo da lista é igual o id do jogo alterado ele atualiza o jogo
+      games.map((game) => (game._id === updatedGame._id ? updatedGame : game))
+    )
+    closeEditModal();
   }
 
   return (
@@ -125,7 +139,7 @@ const HomeContent = () => {
         {/* Renderização condicional para exibir o modal de edição */}
         {selectedGame && (
           // criando props e mandando uma função onClose={closeEditModal}
-          <EditContent game={selectedGame} onClose={closeEditModal}/>
+          <EditContent game={selectedGame} onClose={closeEditModal} handleUpdate={handleUpdate}/>
         )}
       </div>
     </>
