@@ -1,4 +1,5 @@
 import axios from "axios"; // importando o axios
+
 // função que coleta o token do localStorage
 export const getAxiosConfig = () => ({
     headers: {
@@ -25,4 +26,10 @@ export const login = async (email, password) => {
     } catch(error){
         return { success: false, message: error.message }
     }
+}
+
+// função que realiza o logout
+export const logout  = async (router) => { //cahma o router ao invés de importar
+    localStorage.removeItem("token");
+    router.push("/")
 }

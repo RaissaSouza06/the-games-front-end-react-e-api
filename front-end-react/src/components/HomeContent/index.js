@@ -45,7 +45,8 @@ const HomeContent = () => {
     try {
       // recebe o id do jogo e manda como parametro p api excluir o jogo
       // a resposta da api é armazenada na variavel response
-      const response = await axios.delete(`http://localhost:4000/games/${gameId}`);
+      const response = await axios.delete(`http://localhost:4000/games/${gameId}`, 
+        getAxiosConfig());
       if (response.status == 204){ // se o status retornado pela api for 204:
         alert("O jogo foi excluido com sucesso")
         // atualizando o estado removendo o jogo excluido

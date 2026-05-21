@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import styles from "@/components/EditContent/EditContent.module.css";
 import axios from "axios";
 import { useRouter } from "next/router";
+// importando o axiosConfig
+import { getAxiosConfig } from "@/services/authService";
 
 
 const EditContent = ({game, onClose, handleUpdate }) => { // recebendo a props {game, onClose}
@@ -49,7 +51,8 @@ const EditContent = ({game, onClose, handleUpdate }) => { // recebendo a props {
         // enviando para a API
         try{
             const response = await axios.put(
-                `http://localhost:4000/games/${id}`, updateGame
+                `http://localhost:4000/games/${id}`, updateGame, 
+                getAxiosConfig()
             );
             if(response.status === 200){
                 alert("O jogo foi alterado com sucesso!")
